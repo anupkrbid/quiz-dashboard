@@ -1,30 +1,51 @@
 <nav class="navbar bg-secondary text-white">
-  <h1 class="my-0 mx-auto">{{ (quizQuestion$ | async)?.name }}</h1>
+  <h1 class="my-0 mx-auto">{{ (quizState$ | async)?.quizName }}</h1>
 </nav>
 <main>
-  <section class="container">
+  <section class="container" *ngIf="!(quizState$ | async)?.quizEndedShowResult; else resultSection">
     <div class="progress my-2">
       <div class="progress-bar bg-success" role="progressbar" [ngStyle]="{ width: + (quizState$ | async)?.progress + '%' }" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
     </div>
     <div class="time-bar my-2">
       Time Remaining: 0:07 / 0:15 seconds
     </div>
-    <div class="card" *ngFor="let quiz of (quizQuestion$ | async)?.questions; index as questionIndex">
+    <div class="card">
       <div class="px-4 py-5">
-        <div class="question card-header bg-secondary text-white h3 mb-1">{{ quiz.name }}</div>
+        <div class="question card-header bg-secondary text-white h3 mb-1">{{ (quizState$ | async)?.currentQuestion?.name }}</div>
         <!-- <div class="custom-control custom-radio" [ngClass]="'answer-value-' + '(1 + i)'">
           <input type="radio" [id]="'customRadio' + 'i'" [name]="'customRadio' + 'i'" class="custom-control-input" (click)="onAnswerSelected($event)">
           <label class="custom-control-label form-control" [for]="'customRadio' + 'i'">LABEL</label>
         </div> -->
-        <div class="input-group" [ngClass]="'answer-value-' + (1 + i)" *ngFor="let quizOption of quiz.options.split(','); index as i">
+        <div class="input-group" [ngClass]="'answer-value-' + (1 + i)" *ngFor="let quizOption of (quizState$ | async)?.currentQuestion?.options?.split(','); index as i">
           <div class="input-group-prepend">
             <div class="input-group-text">
-              <input [id]="'customRadio' + i + questionIndex"  type="radio" [name]="'quiz-option-'+ questionIndex" aria-label="Radio button for following text input" (click)="onAnswerSelected(quizOption, questionIndex)">
+              <input [id]="'customRadio' + i"  type="radio" [name]="'quiz-option-'+ (quizState$ | async)?.currentRound" aria-label="Radio button for following text input" (click)="onAnswerSelected(quizOption)">
             </div>
           </div>
-          <label [for]="'customRadio' + i + questionIndex" class="form-control"> {{ quizOption }}</label>
+          <label [for]="'customRadio' + i" class="form-control"> {{ quizOption }}</label>
         </div>
       </div>
     </div>
   </section>
+
+  <ng-template #resultSection>
+    <section class="container pt-5">
+      <div class="text-center">
+        <h1>Your score is: {{ (resultState$ | async).score }}</h1>
+      </div>
+
+      <ng-container *ngFor="let item of (resultState$ | async).questions" >
+        <p>Correct Option: {{ item.correct_option }}</p>
+        <p>Submitted Option: {{ item.submitted_option }}</p>
+      </ng-container>
+      <!-- <div class="shadow-sm p-3 mb-3 bg-white rounded" *ngFor="let quiz of quizList$ | async; index as i">
+        <div class="clearfix">
+          <h3 class="border border-secondary p-2 float-left" [ngClass]="'quiz-list-' + (i + 1)"> {{ quiz.name }}</h3>
+          <button class="btn btn-sm btn-success mt-1 float-right" [ngClass]="'start-quiz-' + (i + 1)" [routerLink]="['/quiz', quiz.id]">Start</button>
+        </div>
+        <hr class="my-1">
+        <span>{{ quiz.description }}</span>
+      </div> -->
+    </section>
+  </ng-template>
 </main>

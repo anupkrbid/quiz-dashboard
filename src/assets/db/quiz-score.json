@@ -1,0 +1,19 @@
+{
+  "questions": [
+    { "ques_id": 1, "correct_option": "Rice", "submitted_option": "Wheat" },
+    { "ques_id": 2, "correct_option": "NZ", "submitted_option": "Australia" },
+    {
+      "ques_id": 3,
+      "correct_option": "Vatican City",
+      "submitted_option": "Canada"
+    },
+    {
+      "ques_id": 4,
+      "correct_option": "Lawn Tennis",
+      "submitted_option": "Football"
+    },
+    { "ques_id": 5, "correct_option": "Germany" }
+  ],
+  "score": 0,
+  "total_score": 5
+}

@@ -4,7 +4,7 @@ import { from, Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import { QuizService } from './quiz.service';
-import { QuizQuestion, QuizState } from './quiz-interface';
+import { QuizState } from './quiz-interface';
 
 @Component({
   selector: 'app-quiz',
@@ -14,7 +14,7 @@ import { QuizQuestion, QuizState } from './quiz-interface';
 export class QuizComponent implements OnInit {
 
   quizState$: Observable<QuizState>;
-  quizQuestion$: Observable<QuizQuestion>;
+  resultState$: Observable<any>;
   constructor(
     private activatedRoute: ActivatedRoute,
     private quizService: QuizService
@@ -24,33 +24,69 @@ export class QuizComponent implements OnInit {
     const quizId = this.activatedRoute.snapshot.params['id'];
     this.quizState$ = this.quizService.quizState$;
 
-    this.quizQuestion$ = this.quizService.getQuiz(quizId).pipe(take(1));
-
     // setting initial quiz state
-    this.quizQuestion$.subscribe((res) => {
-      this.quizService.quizState$.next({
-        quiz_id: quizId,
-        currentRound: 1,
-        totalRounds: res.questions.length,
-        progress: (1 / res.questions.length) * 100,
-        answerStatus: []
-      });
+    this.quizService.getQuiz(quizId)
+      .pipe(take(1))
+      .subscribe((res) => {
+        this.quizService.quizState$.next({
+          quiz_id: quizId,
+          quizName: res.name,
+          currentRound: 1,
+          totalRounds: res.questions.length,
+          progress: (1 / res.questions.length) * 100,
+          mappings: [],
+          questions: res.questions,
+          currentQuestion: res.questions[0],
+          quizEndedShowResult: false
+        });
     });
   }
 
-  onAnswerSelected(quizOption, questionIndex) {
-    console.log(quizOption, questionIndex);
-    // {
-    //   "quiz_id": "1",
-    //   "mappings": [{
-    //       "ques_id": 1,
-    //       "submitted_option": "Rice"
-    //     },
-    //     {
-    //       "ques_id": 2,
-    //       "submitted_option": "NZ"
-    //     }
-    //   ]
-    // }
+  onAnswerSelected(quizOption) {
+    console.log(quizOption);
+    console.log(this.quizService.quizState$.getValue());
+    const currentQuizState = JSON.parse(JSON.stringify(this.quizService.quizState$.getValue()));
+
+    const nextRound = currentQuizState.currentRound + 1;
+    const totalRounds = currentQuizState.totalRounds;
+
+    if (nextRound > totalRounds) {
+      const newQuestionState = {
+        ...currentQuizState,
+        currentQuestion: null,
+        mappings: [
+          ...currentQuizState.mappings,
+          {
+            ques_id: currentQuizState.currentQuestion.id,
+            submitted_option: quizOption
+          }
+        ],
+        quizEndedShowResult: true
+      };
+
+      console.log(newQuestionState);
+      // updating quiz state to quiz ended
+      this.quizService.quizState$.next(newQuestionState);
+      // fetching result state
+      this.resultState$ = this.quizService.getQuizScore(newQuestionState).pipe(take(1));
+    } else {
+      const newQuestionState = {
+        ...currentQuizState,
+        currentRound: nextRound,
+        progress: (nextRound / totalRounds) * 100,
+        currentQuestion: currentQuizState.questions[nextRound - 1],
+        mappings: [
+          ...currentQuizState.mappings,
+          {
+            ques_id: currentQuizState.currentQuestion.id,
+            submitted_option: quizOption
+          }
+        ]
+      };
+
+      console.log(newQuestionState);
+      // updating quiz state
+      this.quizService.quizState$.next(newQuestionState);
+    }
   }
 }

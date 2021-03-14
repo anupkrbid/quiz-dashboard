@@ -6,10 +6,14 @@ export interface QuizTopic {
 
 export interface QuizState {
   quiz_id: string,
+  quizName: string,
   currentRound: number;
   totalRounds: number;
   progress: number;
-  answerStatus:  Answer[];
+  mappings:  Answer[];
+  questions: Questions[];
+  currentQuestion: Questions;
+  quizEndedShowResult: boolean;
 }
 
 interface Answer {
