@@ -1,16 +1,18 @@
-<main role="main" class="container">
-  <div class="text-center mt-5">
-    <h1>Welcome to CodeJudge</h1>
-  </div>
-  <div class="shadow-sm p-3 mb-3 bg-white rounded" *ngFor="let quiz of quizList$ | async; index as i">
-    <div class="clearfix">
-      <h3 class="border border-secondary p-2 float-left" [ngClass]="'quiz-list-' + (i + 1)"> {{ quiz.name }}</h3>
-      <button class="btn btn-sm btn-success mt-1 float-right" [ngClass]="'start-quiz-' + (i + 1)" [routerLink]="['/quiz', quiz.id]">Start</button>
-      <!-- <a [routerLink]="['/user/bob']" [queryParams]="{debug: true}" fragment="education">
-        link to user component
-      </a> -->
+<main class="h-100">
+  <section class="container pt-5">
+    <div class="text-center">
+      <h1>Welcome to CodeJudge</h1>
     </div>
-    <hr class="my-1">
-    <span>{{ quiz.description }}</span>
-  </div>
+    <div class="shadow-sm p-3 mb-3 bg-white rounded" *ngFor="let quiz of quizList$ | async; index as i">
+      <div class="clearfix">
+        <h3 class="border border-secondary p-2 float-left" [ngClass]="'quiz-list-' + (i + 1)"> {{ quiz.name }}</h3>
+        <button class="btn btn-sm btn-success mt-1 float-right" [ngClass]="'start-quiz-' + (i + 1)" [routerLink]="['/quiz', quiz.id]">Start</button>
+        <!-- <a [routerLink]="['/user/bob']" [queryParams]="{debug: true}" fragment="education">
+          link to user component
+        </a> -->
+      </div>
+      <hr class="my-1">
+      <span>{{ quiz.description }}</span>
+    </div>
+  </section>
 </main>

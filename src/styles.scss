@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 
-// Imports functions, variables, and mixins that are needed by other Bootstrap files (if you are not importing bootstrap.scss in angular.json)
+// Imports functions, variables, and mixins that are needed by other Bootstrap files
 // @import "~bootstrap/scss/functions";
 // @import "~bootstrap/scss/variables";
 // @import "~bootstrap/scss/mixins";
@@ -8,6 +8,6 @@
 // @import "~bootstrap/scss/grid";
 // @import "~bootstrap/scss/utilities";
 
-body {
-  background-color: #e9ecef;
+html, body {
+  height: 100vh;
 }

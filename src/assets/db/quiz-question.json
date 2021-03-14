@@ -1,0 +1,41 @@
+{
+  "name": "Indian Geography",
+  "description": "Indian Geography Online Test contains various questions that are useful for every candidate to face multiple competitive exams.",
+  "questions": [
+    {
+      "id": 11,
+      "name": "India is located on which part of Indo-Australian Plate?",
+      "options": "Southern,Western,Northern,Eastern",
+      "quiz": 3,
+      "points": 1
+    },
+    {
+      "id": 12,
+      "name": "Which one of the major source of irrigation in India?",
+      "options": "Canals,Wells,Other Sources,Tanks",
+      "quiz": 3,
+      "points": 1
+    },
+    {
+      "id": 13,
+      "name": "The Mangroove forests of the Gangetic delta (West Bengal) are called?",
+      "options": "Sholas,Sunderbans,Kalibans,Evergreen Forests",
+      "quiz": 3,
+      "points": 1
+    },
+    {
+      "id": 14,
+      "name": "Corbett National Park is in?",
+      "options": "Bihar,Assam,Uttarakhand,Madhya Pradesh",
+      "quiz": 3,
+      "points": 1
+    },
+    {
+      "id": 15,
+      "name": "Which city is known as the \"Queen of the Arabian Sea\"?",
+      "options": "Vishakhapatnam,Kochi,Kollam,Panaji",
+      "quiz": 3,
+      "points": 1
+    }
+  ]
+}
