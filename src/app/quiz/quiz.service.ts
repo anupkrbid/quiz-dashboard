@@ -1,9 +1,11 @@
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { map } from 'rxjs/internal/operators/map';
+import { Subject } from 'rxjs';
 
 import { environment } from './../../environments/environment';
-import { QuizTopic, QuizState, QuizQuestion } from './quiz-interface';
+import { QuizTopic, QuizState, QuizQuestion } from './quiz.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -21,23 +23,38 @@ export class QuizService {
     currentQuestion: null,
     quizEndedShowResult: false
   });
+  resultState$ = new Subject<any>();
   constructor(private httpClient: HttpClient) { }
 
+  getApiUrl() {
+    return environment.apiUrl;
+  }
+
   getQuizList() {
-    // const apiUrl = `${environment.apiUrl}/api/quiz/all`;
-    const apiUrl = 'http://54.221.109.49:4000/api/quiz/all';
+    const apiUrl = `${this.getApiUrl()}/api/quiz/all`;
     return this.httpClient.get<QuizTopic[]>(apiUrl);
   }
 
   getQuiz(id: string) {
-    // const apiUrl =  `${environment.apiUrl}/api/quiz-questions/all/${id}`;
-    const apiUrl = 'http://54.221.109.49:4000/api/quiz-questions/all/' + id;
+    const apiUrl =  `${this.getApiUrl()}/api/quiz-questions/all/${id}`;
     return this.httpClient.get<QuizQuestion>(apiUrl);
   }
 
   getQuizScore({ quiz_id, mappings, questions }: any) {
-    // const apiUrl =  `${environment.apiUrl}/api/user/quiz-score`;
-    const apiUrl = 'http://54.221.109.49:4000/api/user/quiz-score';
-    return this.httpClient.post(apiUrl, { quiz_id, mappings });
+    const apiUrl =  `${this.getApiUrl()}/api/user/quiz-score`;
+    return this.httpClient.post(apiUrl, { quiz_id, mappings })
+      .pipe(map((res: any) => {
+        const questionMap = new Map();
+        for (let question of questions) {
+            questionMap.set(question.id, question.name)
+        }
+        res.questions = res.questions.map(question => {
+            return {
+                ...question,
+                question: questionMap.get(question.ques_id)
+            }
+        })
+        return res;
+      }));
   }
 }

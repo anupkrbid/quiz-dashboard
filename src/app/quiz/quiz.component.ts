@@ -1,10 +1,10 @@
 import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
-import { from, Observable } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { Observable, interval } from 'rxjs';
+import { switchMap, take, takeUntil } from 'rxjs/operators';
 
 import { QuizService } from './quiz.service';
-import { QuizState } from './quiz-interface';
+import { QuizState } from './quiz.interface';
 
 @Component({
   selector: 'app-quiz',
@@ -12,7 +12,7 @@ import { QuizState } from './quiz-interface';
   styleUrls: ['./quiz.component.scss']
 })
 export class QuizComponent implements OnInit {
-
+  timer = '15';
   quizState$: Observable<QuizState>;
   resultState$: Observable<any>;
   constructor(
@@ -40,11 +40,24 @@ export class QuizComponent implements OnInit {
           quizEndedShowResult: false
         });
     });
+
+    // timer logic
+    this.quizService.quizState$.pipe(
+      switchMap(_ => {
+        return interval(1000);
+      }),
+      takeUntil(this.quizService.resultState$)
+    ).subscribe(time => {
+      const timeRemaining = 15 - time;
+      this.timer = timeRemaining > 9 ? String(timeRemaining) : '0' + String(timeRemaining);
+      console.log(timeRemaining);
+      if (timeRemaining === 0) {
+        this.showNextQuestion();
+      }
+    });
   }
 
   onAnswerSelected(quizOption) {
-    console.log(quizOption);
-    console.log(this.quizService.quizState$.getValue());
     const currentQuizState = JSON.parse(JSON.stringify(this.quizService.quizState$.getValue()));
 
     const nextRound = currentQuizState.currentRound + 1;
@@ -68,6 +81,7 @@ export class QuizComponent implements OnInit {
       // updating quiz state to quiz ended
       this.quizService.quizState$.next(newQuestionState);
       // fetching result state
+      this.quizService.resultState$.next();
       this.resultState$ = this.quizService.getQuizScore(newQuestionState).pipe(take(1));
     } else {
       const newQuestionState = {
@@ -82,6 +96,39 @@ export class QuizComponent implements OnInit {
             submitted_option: quizOption
           }
         ]
+      };
+
+      console.log(newQuestionState);
+      // updating quiz state
+      this.quizService.quizState$.next(newQuestionState);
+    }
+  }
+
+  showNextQuestion() {
+    const currentQuizState = JSON.parse(JSON.stringify(this.quizService.quizState$.getValue()));
+
+    const nextRound = currentQuizState.currentRound + 1;
+    const totalRounds = currentQuizState.totalRounds;
+
+    if (nextRound > totalRounds) {
+      const newQuestionState = {
+        ...currentQuizState,
+        currentQuestion: null,
+        quizEndedShowResult: true
+      };
+
+      console.log(newQuestionState);
+      // updating quiz state to quiz ended
+      this.quizService.quizState$.next(newQuestionState);
+      // fetching result state
+      this.quizService.resultState$.next();
+      this.resultState$ = this.quizService.getQuizScore(newQuestionState).pipe(take(1));
+    } else {
+      const newQuestionState = {
+        ...currentQuizState,
+        currentRound: nextRound,
+        progress: (nextRound / totalRounds) * 100,
+        currentQuestion: currentQuizState.questions[nextRound - 1]
       };
 
       console.log(newQuestionState);

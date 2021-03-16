@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import { QuizService } from '../quiz/quiz.service';
-import { QuizTopic } from '../quiz/quiz-interface';
+import { QuizTopic } from '../quiz/quiz.interface';
 
 @Component({
   selector: 'app-dashboard',
