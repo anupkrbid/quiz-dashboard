@@ -12,14 +12,10 @@
     <div class="card">
       <div class="px-4 py-5">
         <div class="question card-header bg-secondary text-white h3 mb-1">{{ (quizState$ | async)?.currentQuestion?.name }}</div>
-        <!-- <div class="custom-control custom-radio" [ngClass]="'answer-value-' + '(1 + i)'">
-          <input type="radio" [id]="'customRadio' + 'i'" [name]="'customRadio' + 'i'" class="custom-control-input" (click)="onAnswerSelected($event)">
-          <label class="custom-control-label form-control" [for]="'customRadio' + 'i'">LABEL</label>
-        </div> -->
         <div class="input-group" [ngClass]="'answer-value-' + (1 + i)" *ngFor="let quizOption of (quizState$ | async)?.currentQuestion?.options?.split(','); index as i">
           <div class="input-group-prepend">
             <div class="input-group-text">
-              <input [id]="'customRadio' + i"  type="radio" [name]="'quiz-option-'+ (quizState$ | async)?.currentRound" aria-label="Radio button for following text input" (click)="onAnswerSelected(quizOption)">
+              <input [id]="'customRadio' + i"  type="radio" [name]="'quiz-option-'+ (quizState$ | async)?.currentRound" aria-label="Radio button for following text input" (click)="showNextQuestion(quizOption)">
             </div>
           </div>
           <label [for]="'customRadio' + i" class="form-control"> {{ quizOption }}</label>

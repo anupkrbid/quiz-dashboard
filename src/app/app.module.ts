@@ -5,7 +5,6 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { QuizService } from './quiz/quiz.service';
 import { TokenInterceptor } from './auth/token-interceptor';
 import { QuizComponent } from './quiz/quiz.component';
 
@@ -21,7 +20,6 @@ import { QuizComponent } from './quiz/quiz.component';
     HttpClientModule,
   ],
   providers: [
-    QuizService,
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]

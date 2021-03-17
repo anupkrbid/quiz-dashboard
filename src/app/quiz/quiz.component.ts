@@ -57,7 +57,7 @@ export class QuizComponent implements OnInit {
     });
   }
 
-  onAnswerSelected(quizOption) {
+  showNextQuestion(quizOption = null) {
     const currentQuizState = JSON.parse(JSON.stringify(this.quizService.quizState$.getValue()));
 
     const nextRound = currentQuizState.currentRound + 1;
@@ -67,55 +67,18 @@ export class QuizComponent implements OnInit {
       const newQuestionState = {
         ...currentQuizState,
         currentQuestion: null,
-        mappings: [
-          ...currentQuizState.mappings,
-          {
-            ques_id: currentQuizState.currentQuestion.id,
-            submitted_option: quizOption
-          }
-        ],
         quizEndedShowResult: true
       };
 
-      console.log(newQuestionState);
-      // updating quiz state to quiz ended
-      this.quizService.quizState$.next(newQuestionState);
-      // fetching result state
-      this.quizService.resultState$.next();
-      this.resultState$ = this.quizService.getQuizScore(newQuestionState).pipe(take(1));
-    } else {
-      const newQuestionState = {
-        ...currentQuizState,
-        currentRound: nextRound,
-        progress: (nextRound / totalRounds) * 100,
-        currentQuestion: currentQuizState.questions[nextRound - 1],
-        mappings: [
+      if (quizOption) {
+        newQuestionState.mappings = [
           ...currentQuizState.mappings,
           {
             ques_id: currentQuizState.currentQuestion.id,
             submitted_option: quizOption
           }
         ]
-      };
-
-      console.log(newQuestionState);
-      // updating quiz state
-      this.quizService.quizState$.next(newQuestionState);
-    }
-  }
-
-  showNextQuestion() {
-    const currentQuizState = JSON.parse(JSON.stringify(this.quizService.quizState$.getValue()));
-
-    const nextRound = currentQuizState.currentRound + 1;
-    const totalRounds = currentQuizState.totalRounds;
-
-    if (nextRound > totalRounds) {
-      const newQuestionState = {
-        ...currentQuizState,
-        currentQuestion: null,
-        quizEndedShowResult: true
-      };
+      }
 
       console.log(newQuestionState);
       // updating quiz state to quiz ended
@@ -130,6 +93,16 @@ export class QuizComponent implements OnInit {
         progress: (nextRound / totalRounds) * 100,
         currentQuestion: currentQuizState.questions[nextRound - 1]
       };
+
+      if (quizOption) {
+        newQuestionState.mappings = [
+          ...currentQuizState.mappings,
+          {
+            ques_id: currentQuizState.currentQuestion.id,
+            submitted_option: quizOption
+          }
+        ]
+      }
 
       console.log(newQuestionState);
       // updating quiz state
